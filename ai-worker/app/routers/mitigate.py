@@ -98,11 +98,19 @@ async def mitigate_risk(req: MitigateRequest) -> MitigateResponse:
             f"{'vendor return prescription' if is_rx else 'discount promotion markdown'} "
             f"policy"
         )
-        policy_chunks = query_policies(query, n_results=3)
-
-        if not policy_chunks:
-            logger.warning("No policy chunks retrieved — generating without policy context")
-            policy_chunks = ["No specific store policies found. Use general best practices."]
+        
+        try:
+            policy_chunks = query_policies(query, n_results=3)
+            if not policy_chunks:
+                logger.warning("No policy chunks retrieved — generating without policy context")
+                policy_chunks = ["No specific store policies found. Use general best practices."]
+        except Exception as exc:
+            logger.error("RAG retrieval failed (ChromaDB error): %s. Falling back to standard rules.", str(exc))
+            policy_chunks = [
+                "Standard Store Rules: Maintain compliance with health and safety standards. "
+                "For non-prescription items nearing expiry, apply a gradual discount of 15-50% based on shelf life. "
+                "For prescription or controlled items, strictly follow vendor return authorizations or safe disposal protocols."
+            ]
 
         # Build prompts
         system_prompt = _build_system_prompt(policy_chunks, strategy_type)

@@ -72,11 +72,11 @@ def initialize_rag() -> None:
     chroma_port = int(os.getenv("CHROMA_PORT", "8200"))
 
     try:
-        _client = chromadb.HttpClient(host=chroma_host, port=chroma_port)
+        _client = chromadb.HttpClient(host=chroma_host, port=chroma_port, settings=Settings(anonymized_telemetry=False))
         logger.info("Connected to ChromaDB at %s:%d", chroma_host, chroma_port)
     except Exception:
         logger.warning("ChromaDB server not available, falling back to ephemeral client")
-        _client = chromadb.EphemeralClient()
+        _client = chromadb.EphemeralClient(settings=Settings(anonymized_telemetry=False))
 
     # Load policy document
     policy_path = os.getenv("POLICY_DOC_PATH", "data/store_policies.md")

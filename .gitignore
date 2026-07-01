@@ -60,3 +60,5 @@ db.sqlite3
 
 # Temporary / Plan files
 .plan/
+
+.gitignore

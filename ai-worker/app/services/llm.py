@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 # Module-level client (initialized lazily)
 _llm_client: OpenAI | None = None
 
-MAX_RETRIES = 4
+MAX_RETRIES = 3
 INITIAL_BACKOFF_SECONDS = 1.0
 BACKOFF_MULTIPLIER = 2.0
 
