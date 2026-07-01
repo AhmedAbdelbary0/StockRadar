@@ -1,9 +1,14 @@
 import { useEffect, useState, useMemo } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useApi } from '../hooks/useApi';
 import { getExpiryRisk, generateMitigation } from '../api/client';
 import RiskBadge from './RiskBadge';
 import CopyButton from './CopyButton';
 import type { BatchPrediction } from '../types';
+
+const cleanStrategyOutput = (rawOutput: string) => {
+  return rawOutput.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+};
 
 export default function MitigationCenter() {
   const { data, loading, error, execute } = useApi(getExpiryRisk);
@@ -18,6 +23,11 @@ export default function MitigationCenter() {
   const highRiskBatches = useMemo(() => {
     return data?.data?.filter((b) => b.risk_level === 'High') || [];
   }, [data]);
+
+  const cleanedMarkdown = useMemo(() => {
+    if (!mitigationApi.data?.markdown_content) return '';
+    return cleanStrategyOutput(mitigationApi.data.markdown_content);
+  }, [mitigationApi.data]);
 
   const handleGenerate = async (batch: BatchPrediction) => {
     setSelectedBatch(batch);
@@ -154,12 +164,12 @@ export default function MitigationCenter() {
                   </div>
                 </div>
 
-                <div className="mitigation-content">
-                  {mitigationApi.data.markdown_content}
+                <div className="mitigation-content prose prose-invert max-w-none text-slate-300">
+                  <ReactMarkdown>{cleanedMarkdown}</ReactMarkdown>
                 </div>
 
                 <div className="mitigation-actions">
-                  <CopyButton content={mitigationApi.data.markdown_content} />
+                  <CopyButton content={cleanedMarkdown} />
                 </div>
               </div>
             ) : null
