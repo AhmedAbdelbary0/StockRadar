@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: warehouse-postgres
+    environment:
+      POSTGRES_USER: warehouse_user
+      POSTGRES_PASSWORD: warehouse_pass
+      POSTGRES_DB: warehouse_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - warehouse_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U warehouse_user -d warehouse_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: warehouse-chromadb
+    ports:
+      - "8200:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - warehouse_net
+
+  backend:
+    build:
+      context: ./backend
+    container_name: warehouse-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=warehouse_db
+      - DB_USER=warehouse_user
+      - DB_PASSWORD=warehouse_pass
+      - PORT=5000
+      - AI_WORKER_URL=http://ai-worker:8000
+      - FRONTEND_URL=http://localhost
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - warehouse_net
+
+  ai-worker:
+    build:
+      context: ./ai-worker
+    container_name: warehouse-ai-worker
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_BASE_URL=https://api.groq.com/openai/v1
+      - LLM_API_KEY=${LLM_API_KEY} # Must be provided in environment or .env
+      - LLM_MODEL_NAME=deepseek-r1-distill-llama-70b
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - POLICY_DOC_PATH=data/store_policies.md
+    depends_on:
+      - chromadb
+    networks:
+      - warehouse_net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: warehouse-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - warehouse_net
+
+volumes:
+  pg_data:
+  chroma_data:
+
+networks:
+  warehouse_net:
+    driver: bridge
