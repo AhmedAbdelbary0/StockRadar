@@ -17,9 +17,9 @@ export default function Layout({ activeTab, onTabChange, children }: LayoutProps
     <div className="app-layout">
       {/* Sidebar */}
       <aside className="sidebar">
-        <div className="sidebar-brand">
-          <h1>Smart Warehouse</h1>
-          <p>Inventory &amp; Expiry Optimizer</p>
+        <div className="sidebar-brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 'var(--space-lg)' }}>
+          <img src="/logo.png" alt="StockRadar Logo" style={{ width: '100%', maxWidth: '200px', height: 'auto', objectFit: 'contain', marginBottom: '8px' }} />
+          <p style={{ margin: 0 }}>Inventory &amp; Expiry Optimizer</p>
         </div>
 
         <nav className="sidebar-nav">
