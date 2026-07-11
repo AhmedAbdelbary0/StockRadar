@@ -1,15 +1,16 @@
 """Mitigation router — RAG-augmented LLM generation for high-risk batches."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.models.schemas import MitigateRequest, MitigateResponse
 from app.services.rag import query_policies
 from app.services.llm import generate_mitigation
 from app.utils.logger import get_logger
+from app.utils.security import verify_internal_secret
 
 logger = get_logger(__name__)
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(verify_internal_secret)])
 
 # Categories that must use vendor return instead of public discount
 VENDOR_RETURN_CATEGORIES = {

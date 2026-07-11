@@ -1,14 +1,15 @@
 """Predict expiry risk router — deterministic velocity-based analysis."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.models.schemas import PredictRequest, PredictResponse
 from app.services.velocity import analyze_batches
 from app.utils.logger import get_logger
+from app.utils.security import verify_internal_secret
 
 logger = get_logger(__name__)
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(verify_internal_secret)])
 
 
 @router.post("/predict-expiry", response_model=PredictResponse)

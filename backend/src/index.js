@@ -3,12 +3,15 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const logger = require('./utils/logger');
 const { initializeDatabase } = require('./db/pool');
 
+const authRoutes = require('./routes/auth');
 const inventoryRoutes = require('./routes/inventory');
 const salesRoutes = require('./routes/sales');
 const analyticsRoutes = require('./routes/analytics');
+const mitigationRoutes = require('./routes/mitigation');
 
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 5000;
@@ -29,6 +32,7 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: '1mb' }));
+app.use(cookieParser());
 
 // HTTP request logging via Morgan piped into Winston
 app.use(morgan('combined', {
@@ -45,9 +49,11 @@ app.get('/health', (req, res) => {
 // ---------------------------------------------------------------------------
 // API Routes
 // ---------------------------------------------------------------------------
+app.use('/api/auth', authRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/mitigation', mitigationRoutes);
 
 // ---------------------------------------------------------------------------
 // 404 Catch-All
@@ -69,6 +75,14 @@ app.use((err, req, res, _next) => {
 // ---------------------------------------------------------------------------
 async function start() {
   try {
+    // Validate required secrets before accepting any connections
+    if (!process.env.JWT_SECRET) {
+      throw new Error('JWT_SECRET environment variable must be set');
+    }
+    if (!process.env.INTERNAL_SECRET) {
+      logger.warn('INTERNAL_SECRET is not set — AI worker internal validation will be disabled');
+    }
+
     await initializeDatabase();
     logger.info('Database initialized');
 

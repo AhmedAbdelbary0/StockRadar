@@ -94,7 +94,9 @@ export default function AnalyticsDashboard() {
   if (error) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">⚠️</div>
+        <div className="empty-state-icon" style={{ color: 'var(--color-accent-rose)' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
         <div className="empty-state-title">Failed to load analytics</div>
         <p>{error}</p>
         <button className="btn btn-primary" onClick={() => execute()} style={{ marginTop: '1rem' }}>
@@ -110,8 +112,9 @@ export default function AnalyticsDashboard() {
         <h2>Analytics Dashboard</h2>
         <p>Real-time expiry risk and inventory health metrics.</p>
         {data?.ai_status === 'unavailable' && (
-          <div style={{ marginTop: '1rem', padding: '0.5rem', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '4px', fontSize: '0.85rem' }}>
-            ⚠️ AI Worker is currently offline. Displaying raw inventory data without risk prediction.
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '1rem', padding: '0.6rem 1rem', background: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '6px', fontSize: '0.85rem' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>AI Worker is currently offline. Displaying raw inventory data without risk prediction.</span>
           </div>
         )}
       </div>

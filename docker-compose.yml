@@ -45,6 +45,9 @@ services:
       - PORT=5000
       - AI_WORKER_URL=http://ai-worker:8000
       - FRONTEND_URL=http://localhost
+      - JWT_SECRET=${JWT_SECRET:-stockradar-jwt-secret-change-in-production}
+      - JWT_EXPIRY=24h
+      - INTERNAL_SECRET=${INTERNAL_SECRET:-stockradar-internal-secret-change-in-production}
     depends_on:
       postgres:
         condition: service_healthy
@@ -64,6 +67,7 @@ services:
       - CHROMA_HOST=chromadb
       - CHROMA_PORT=8000
       - POLICY_DOC_PATH=data/store_policies.md
+      - INTERNAL_SECRET=${INTERNAL_SECRET:-stockradar-internal-secret-change-in-production}
     depends_on:
       - chromadb
     networks:

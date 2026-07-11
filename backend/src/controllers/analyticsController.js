@@ -3,6 +3,7 @@ const axios = require('axios');
 const logger = require('../utils/logger');
 
 const AI_WORKER_URL = process.env.AI_WORKER_URL || 'http://localhost:8000';
+const INTERNAL_SECRET = process.env.INTERNAL_SECRET;
 
 /**
  * GET /api/analytics/expiry-risk
@@ -59,7 +60,10 @@ async function getExpiryRisk(req, res) {
     try {
       const aiResponse = await axios.post(`${AI_WORKER_URL}/predict-expiry`, payload, {
         timeout: 30000,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Internal-Secret': INTERNAL_SECRET,
+        },
       });
       riskAnalysis = aiResponse.data;
     } catch (aiErr) {

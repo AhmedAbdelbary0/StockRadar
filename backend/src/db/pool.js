@@ -22,11 +22,12 @@ pool.on('error', (err) => {
 });
 
 /**
- * Initialize the database by running the DDL script.
+ * Initialize the database by running the DDL script then the seed migration.
  */
 async function initializeDatabase() {
   const fs = require('fs');
   const path = require('path');
+
   const initSql = fs.readFileSync(
     path.join(__dirname, 'init.sql'),
     'utf-8'
@@ -37,6 +38,18 @@ async function initializeDatabase() {
   } catch (err) {
     logger.error('Failed to initialize database tables', { error: err.message });
     throw err;
+  }
+
+  // Run seed migration to populate test accounts (safe to re-run — uses ON CONFLICT DO NOTHING)
+  const seedSql = fs.readFileSync(
+    path.join(__dirname, 'seed.sql'),
+    'utf-8'
+  );
+  try {
+    await pool.query(seedSql);
+    logger.info('Seed migration applied successfully');
+  } catch (err) {
+    logger.warn('Seed migration skipped or partially applied', { error: err.message });
   }
 }
 

@@ -1,5 +1,17 @@
 /* ---- TypeScript interfaces for Smart Warehouse ---- */
 
+// ---- Auth & RBAC ----
+
+export type UserRole = 'FLOOR_STAFF' | 'MANAGER';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+}
+
+
 export interface Product {
   id: number;
   sku: string;

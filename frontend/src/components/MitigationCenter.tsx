@@ -46,7 +46,9 @@ export default function MitigationCenter() {
   if (error) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">⚠️</div>
+        <div className="empty-state-icon" style={{ color: 'var(--color-accent-rose)' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
         <div className="empty-state-title">Failed to load risk data</div>
         <p>{error}</p>
         <button className="btn btn-primary" onClick={() => execute()} style={{ marginTop: '1rem' }}>
@@ -73,7 +75,9 @@ export default function MitigationCenter() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {highRiskBatches.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-state-icon">🎉</div>
+                <div className="empty-state-icon" style={{ color: 'var(--color-accent-emerald)' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
                 <div className="empty-state-title">All Clear</div>
                 <p>No high-risk batches detected.</p>
               </div>
@@ -122,7 +126,10 @@ export default function MitigationCenter() {
                           Generating...
                         </>
                       ) : (
-                        '✨ Generate Mitigation Plan'
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                          <span>Generate Mitigation Plan</span>
+                        </div>
                       )}
                     </button>
                   </div>
@@ -149,7 +156,9 @@ export default function MitigationCenter() {
               </div>
             ) : mitigationApi.error ? (
               <div className="empty-state">
-                <div className="empty-state-icon">⚠️</div>
+                <div className="empty-state-icon" style={{ color: 'var(--color-accent-rose)' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
                 <div className="empty-state-title">Generation Failed</div>
                 <p>{mitigationApi.error}</p>
               </div>
@@ -159,8 +168,18 @@ export default function MitigationCenter() {
                   <div style={{ fontSize: '0.85rem', color: 'var(--color-accent-blue)' }}>
                     Target: {selectedBatch.product_name}
                   </div>
-                  <div style={{ fontSize: '0.75rem', padding: '2px 8px', background: 'rgba(255,255,255,0.1)', borderRadius: '12px' }}>
-                    {mitigationApi.data.strategy_type === 'vendor_return' ? '📦 Vendor Return' : '🏷️ Promotional Bundle'}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', padding: '4px 10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px' }}>
+                    {mitigationApi.data.strategy_type === 'vendor_return' ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+                        <span>Vendor Return</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                        <span>Promotional Bundle</span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -175,7 +194,9 @@ export default function MitigationCenter() {
             ) : null
           ) : (
             <div className="empty-state">
-              <div className="empty-state-icon">🛡️</div>
+              <div className="empty-state-icon" style={{ color: 'var(--color-text-muted)', opacity: 0.6 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
               <div className="empty-state-title">No Strategy Selected</div>
               <p>Select a high-risk batch to generate an AI mitigation strategy based on store policies.</p>
             </div>

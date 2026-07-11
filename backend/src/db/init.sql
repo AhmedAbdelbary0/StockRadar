@@ -3,8 +3,28 @@
 -- Database Initialization Script
 -- ============================================================
 
--- Enable UUID extension for potential future use
+-- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- -----------------------------------------------------------
+-- 0. Users & Authentication
+-- -----------------------------------------------------------
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+        CREATE TYPE user_role AS ENUM ('FLOOR_STAFF', 'MANAGER');
+    END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS users (
+    id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name     VARCHAR(255) NOT NULL,
+    role          user_role    NOT NULL DEFAULT 'FLOOR_STAFF',
+    created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
 
 -- -----------------------------------------------------------
 -- 1. Products Table
